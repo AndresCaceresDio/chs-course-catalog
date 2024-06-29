@@ -34,7 +34,7 @@ def write_blocks_to_sheet(sheet, blocks):
     for i in range(0, len(blocks), batch_size):
         end_index = i + batch_size
         values = [[block] for block in blocks[i:end_index]]
-        cell_range = 'A{}:A{}'.format(i+1, i + len(values))  # Renamed variable to 'cell_range'
+        cell_range = 'A{}:A{}'.format(i+1, i + len(values))
         sheet.update(values, cell_range)
 
 # Main function to execute the workflow
