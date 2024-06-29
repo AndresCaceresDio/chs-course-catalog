@@ -16,7 +16,7 @@ To set up and run the CHS Courses website locally, follow these steps:
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/CHS_courses.git
+    git clone https://github.com/Matiasjcd/CHS_courses.git
     cd CHS_courses
     ```
 
