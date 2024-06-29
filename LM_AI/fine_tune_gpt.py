@@ -1,14 +1,14 @@
 from openai import OpenAI
-client = OpenAI(api_key='sk-proj-OhhalHV4AzxpDSaDOha9T3BlbkFJ6ppBjN1Z2hgoPQDHj2yz')
+client = OpenAI(api_key='MY_API_KEY')
 
 # response = client.files.create(
-#   file=open("gpt.jsonl", "rb"),
+#   file=open("my_file.jsonl", "rb"),
 #   purpose="fine-tune"
 # )
 
 # print(response)
 
 client.fine_tuning.jobs.create(
-  training_file="file-qsMgQJVneo6VUeG28FRFkxzm",
+  training_file="file-abc123",
   model="gpt-3.5-turbo"
 )
