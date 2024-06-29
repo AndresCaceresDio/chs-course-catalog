@@ -53,7 +53,7 @@ To use the CHS Courses website:
 
 This project requires the following modules, as listed in `requirements.txt`:
 - Flask
-- SQLite
+- SQLite (normally a built-in library for Python)
 
 ## Contact Information
 
