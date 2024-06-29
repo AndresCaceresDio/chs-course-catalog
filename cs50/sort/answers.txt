@@ -1,0 +1,24 @@
+sort1 uses: Bubble Sort
+
+How do you know?: Sort1 was considerably faster than sort3 and faster than sort2 in a sorted list. Since Bubble sort
+has the fastest best case scenario running time (on the Omega of n), it would make sense that it was the fastest to
+sort an already sorted list.
+
+sort2 uses: Merge Sort
+
+How do you know?: Sort2 experienced extremely similar running times no matter if the list was sorted, reversed, or
+randomized (as long as the amount of numbers stayed the same). It was also the fastest to sort a reversed list, the
+fastest to sort a randomized list, and the second fastest to sort a sorted list. These data all prove that sort2
+uses merge sort because its running time is on the theta of n, giving it similar running times, and it has a faster
+running time than selection and bubble sort on every occasion except an already sorted list, wherein bubble sort
+would have a faster running time, thus explaining why sort2 finished second on a sorted list.
+
+sort3 uses: Selection Sort
+
+How do you know?: Besides the method of elimination, one could tell that sort3 uses selection sort because sort3 was
+much slower than the other two algorithms in a sorted list but then placed second on a randomized and a reversed list.
+It also finished quite close to sort1 in a randomized list and in a reversed list. After analysing these data, it
+would make sense that sort3 uses selection sort because selection sort is on the big O of n^2 just as bubble sort is,
+explaining the similar scores in randomized and reversed lists between sort3 and sort1, and is also on the Omega of
+n^2, much slower than merge and bubble sort, which would expalain sort3's lackluster running time in a sorted list
+compared to the other algorithms.
