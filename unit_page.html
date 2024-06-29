@@ -1,0 +1,53 @@
+{% extends "backbone.html" %}
+
+{% block title %}
+{{ unit }}
+{% endblock %}
+
+{% block main %}
+<section class="py-5 text-center container">
+    <div class="row py-lg-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="header" style="margin-bottom: 15px;">Topics in {{ unit }}</h1>
+            <p class="section-text">The Multistate Bar Exam consists of 36 units, each containing a number of topics within them. We encourage you to study each topic in any order, although we do recommend you finish the unit before you move onto other units.</p>
+            {% if not session["user_id"] %}
+            <p>
+                <a href="/login" class="btn btn-primary my-2" style="background-color: blue !important; border: 2px solid blue !important;">Log In</a>
+                <a href="/sign-up" style="font-family: 'Poppins', sans-serif !important;" class="btn btn-secondary my-2">Sign Up</a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<div class="album py-5" style="margin-top: -100px; margin-bottom: -25px;">
+    <div class="container">
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col">
+                <div class="card text-center">
+                    <div class="card-body" style="{{ style }}">
+                        <h5 class="card-title"><a class="card-link" href="{{ unit_link }}">Overview</a></h5>
+                        <p class="card-text">An overview of the {{ unit }} unit.</p>
+                        <a href="{{ unit_link }}" class="btn btn-primary">Go here</a>
+                    </div>
+                </div>
+            </div>
+
+            {% for i in range(len(topics)) %}
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><a class="card-link" href="{{ topic_links[i] }}">{{ topics[i] }}</a></h5>
+                        <p class="card-text">{{ topic_descriptions[i] }}</p>
+                        <a href="{{ topic_links[i] }}" class="btn btn-primary" style="width: 100%;">Go here</a>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

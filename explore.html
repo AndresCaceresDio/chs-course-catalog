@@ -1,0 +1,71 @@
+{% extends "backbone.html" %}
+
+{% block title %}
+    Explore
+{% endblock %}
+
+{% block main %}
+
+    <body>
+        <section class="py-5 text-center container">
+            <div class="row py-lg-5">
+                <div class="col-lg-6 col-md-8 mx-auto">
+                    <h1 class="header" style="margin-bottom: 15px;">Modules</h1>
+                    <p class="section-text">The Multistate Bar Exam consists of seven modules, each containing a number of units within them. Although each module is tested equally, some units have more weight than others.</p>
+                    {% if not session["user_id"] %}
+                        <p>
+                            <a href="/login" class="btn btn-primary my-2" style="background-color: blue !important; border: 2px solid blue !important;">Log In</a>
+                            <a href="/sign-up" style="font-family: 'Poppins', sans-serif !important;" class="btn btn-secondary my-2">Sign Up</a>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <div class="album py-5" style="margin-top: -100px; margin-bottom: -25px;">
+            <div class="container">
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    {% for i in range(len(modules)) %}
+                        <div class="col">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title"><a class="card-link" href="{{ module_links[i] }}">{{ modules[i] }}</a></h5>
+                                    <p class="card-text">{{ module_descriptions[i] }}</p>
+                                    <form id="topicForm" class="row g-3">
+                                        <select id="select" class="form-select">
+                                            {% for j in range(len(units[i])) %}
+                                                <option value="{{ units[i][j]['unit'] }}">{{ units[i][j]['unit'] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <a onclick="submitForm(this)" class="btn btn-primary">Go here</a>
+                                        <script>
+                                            function submitForm(button) {
+                                                var form = button.closest("form");
+                                                var select = form.querySelector("select");
+                                                var selectedValue = select.value;
+                                                selectedValue = selectedValue.toLowerCase().replace(/\s+/g, "-");
+                                                var url = "/units/" + selectedValue;
+                                                form.action = url;
+                                                form.submit();
+                                            }
+                                        </script>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="{{ card_class }}">
+                        <div class="card text-center">
+                            <div class="card-body" style="height: 220px; position: relative; top: 50%; transform: translateY(12.5%);">
+                                <h5 class="card-title">Practice Tests</h5>
+                                <p class="card-text">Enhance your learning with full-length MBE practice tests.</p>
+                                <a class="btn btn-primary">Go here</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+{% endblock %}

@@ -1,20 +1,13 @@
-import os
-
 from cs50 import SQL
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
-from tempfile import mkdtemp
 from werkzeug.security import check_password_hash, generate_password_hash
+from functools import wraps
 
-from helpers import apology, login_required, lookup, usd
 
 # Configure application
 app = Flask(__name__)
 
-stocks = {}
-
-# Custom filter
-app.jinja_env.filters["usd"] = usd
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
@@ -22,7 +15,23 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
+db = SQL("sqlite:///law_master.db")
+
+
+def login_required(f):
+    """
+    Decorate routes to require login.
+
+    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    """
+
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("user_id") is None:
+            return redirect("/login")
+        return f(*args, **kwargs)
+
+    return decorated_function
 
 
 @app.after_request
@@ -35,336 +44,474 @@ def after_request(response):
 
 
 @app.route("/")
-@login_required
 def index():
-    """Show portfolio of stocks"""
-    if request.method == "GET":
-        id = session["user_id"]
-        username = alphabetize(str(db.execute('SELECT username FROM users WHERE id = ?', id))).split("username")[1]
-        rows = db.execute('SELECT * FROM portfolio WHERE username = ?', username)
-        if len(rows) == 0:
-            return render_template("blankIndex.html")
-        cash = int(digitize(str(db.execute('SELECT cash FROM users WHERE id = ?', id))))
-        portfolio_id = int(digitize(str(db.execute('SELECT id FROM portfolio WHERE username = ? LIMIT 1', username))))
-        stocks = []
-        stock_prices = []
-        shares = []
-        holding_values = []
-        for i in range(len(rows)):
-            stocks.append(symbolize(str(db.execute('SELECT stock FROM portfolio WHERE id = ?', (portfolio_id + i)))))
-            if stocks[i] == "":
-                stocks.remove(stocks[i])
-            stock_prices.append(int(lookup(stocks[i])['price']))
-            shares.append(
-                int(digitize(str(db.execute('SELECT shares FROM portfolio WHERE username = ? AND stock = ?', username, stocks[i])))))
-            holding_values.append(stock_prices[i] * shares[i])
-            grand_total = cash + total(holding_values)
-        return render_template("index.html", usd=usd, cash=usd(cash), username=username, grand_total=usd(grand_total),
-                               stocks=stocks, shares=shares, holding_values=holding_values, stock_prices=stock_prices, owned=range(len(stocks)))
-    return apology("TODO")
+    return render_template("index.html")
+
+@app.route("/pricing")
+def pricing():
+    return render_template("pricing.html")
+
+@app.route("/our-story")
+def our_story():
+    return render_template("our_story.html")
+
+@app.route("/our-website")
+def our_website():
+    return render_template("our_website.html")
+
+@app.route('/blog')
+def blog():
+    cards = [
+        {
+            "id": 1,
+            "url": "https://www.hcpss.org",
+            "article-date": "Jan 1, 2020",
+            "article-tag": "Law",
+            "article-title": "New Legislation",
+            "article-author": "John Doe",
+            "article-img-src": "https://static.wikia.nocookie.net/rimworld-bestiary/images/4/4d/VerySmallTeeth.png/revision/latest?cb=20210325131516",
+            "author-bio-href": "https://www.google.com"
+        },
+        {
+            "id": 2,
+            "url": "https://www.xyz.xyz",
+            "article-date": "Jan 2, 2020",
+            "article-tag": "Tech",
+            "article-title": "Tech Mergers",
+            "article-author": "Jane Smith",
+            "article-img-src": "https://static.wikia.nocookie.net/rimworld-bestiary/images/4/4d/VerySmallTeeth.png/revision/latest?cb=20210325131516",
+            "author-bio-href": "https://www.internet.com"
+        },
+        {
+            "id": 3,
+            "url": "https://www.fiverr.com",
+            "article-date": "Jan 3, 2020",
+            "article-tag": "Business",
+            "article-title": "Market Trends",
+            "article-author": "Ann Brown",
+            "article-img-src": "https://static.wikia.nocookie.net/rimworld-bestiary/images/4/4d/VerySmallTeeth.png/revision/latest?cb=20210325131516",
+            "author-bio-href": "https://www.scam.com"
+        },
+        {
+            "id": 4,
+            "url": "https://www.cars.com",
+            "article-date": "May 12, 2024",
+            "article-tag": "Seba",
+            "article-title": "Seba is Him",
+            "article-author": "Sebastian Caceres-Dioverti",
+            "article-img-src": "https://static.wikia.nocookie.net/rimworld-bestiary/images/4/4d/VerySmallTeeth.png/revision/latest?cb=20210325131516",
+            "author-bio-href": "https://www.sackick.com"
+        },
+        {
+            "id": 5,
+            "url": "https://www.carrd.co",
+            "article-date": "May 1000, 10000",
+            "article-tag": "Code",
+            "article-title": "No-Code Solutions for a Particular Use Case",
+            "article-author": "Sebastian Caceres-Dioverti",
+            "article-img-src": "https://static.wikia.nocookie.net/rimworld-bestiary/images/4/4d/VerySmallTeeth.png/revision/latest?cb=20210325131516",
+            "author-bio-href": "https://www.facebook.com"
+        }
+    ]
+    return render_template('blog.html', cards=cards)
+
+@app.route("/explore")
+def explore():
+    modules = []
+    for i in range(len(db.execute("SELECT DISTINCT module FROM contents"))):
+        modules.append(db.execute("SELECT DISTINCT module FROM contents")[i]["module"])
+
+    module_links = []
+    for i in range(len(db.execute("SELECT DISTINCT module_link FROM contents"))):
+        module_links.append(db.execute("SELECT DISTINCT module_link FROM contents")[i]["module_link"])
+
+    module_descriptions = []
+    for i in range(len(db.execute("SELECT DISTINCT module_description FROM contents"))):
+        module_descriptions.append(db.execute("SELECT DISTINCT module_description FROM contents")[i]["module_description"])
+
+    units = []
+    for i in range(len(modules)):
+        units.append(db.execute("SELECT DISTINCT unit FROM contents WHERE module = ?", modules[i]))
+
+    return render_template(
+        "explore.html",
+        modules=modules,
+        module_links=module_links,
+        module_descriptions=module_descriptions,
+        units=units,
+        range=range,
+        len=len,
+    )
 
 
-@app.route("/buy", methods=["GET", "POST"])
-@login_required
-def buy():
-    """Buy shares of stock"""
+@app.route("/sign-up", methods=["GET", "POST"])
+def sign_up():
+    """Register user"""
+    session.clear()
     if request.method == "POST":
-        id = session["user_id"]
-        username = alphabetize(str(db.execute('SELECT username FROM users WHERE id = ?', id))).split("username")[1]
-        symbol = request.form.get("symbol")
-        shares = request.form.get("shares")
-        try:
-            if lookup(symbol) == None or symbol == "":
-                return apology("invalid stock symbol")
-            elif int(shares) < 1:
-                return apology("Cannot buy less than 1 shares")
-        except (ValueError):
-            return apology("Cannot buy a fraction of a share")
-        rows = db.execute('SELECT * FROM portfolio WHERE username = ?', username)
-        bought_symbol = 0
-        bought_shares = 0
-        bought_price = 0
-        if len(rows) > 0:
-            bought_symbol = symbolize(
-                str(db.execute('SELECT stock FROM portfolio WHERE stock = ? AND username = ? LIMIT 1', symbol, username)))
-            if lookup(bought_symbol) != None:
-                bought_shares = int(
-                    digitize(str(db.execute('SELECT shares FROM portfolio WHERE stock = ? AND username = ?', symbol, username))))
-                bought_price = int(
-                    digitize(str(db.execute('SELECT price FROM portfolio WHERE stock = ? AND username = ?', symbol, username))))
-        stocks = lookup(symbol)
-        updated_shares = int(int(shares) + int(bought_shares))
-        price = int(stocks['price']) * int(shares)
-        new_price = bought_price + price
-        cash = int(digitize(str(db.execute('SELECT cash FROM users WHERE id = ?', id))))
-        if cash < price:
-            return apology("You cannot afford this")
-        elif symbol == bought_symbol:
-            updated_cash = cash - price
-            db.execute('UPDATE users SET cash = ? WHERE id = ?', updated_cash, id)
-            db.execute('INSERT INTO purchases (stock, username, price, shares) VALUES (?, ?, ?, ?)',
-                       stocks['name'], username, price, shares)
-            db.execute('UPDATE portfolio SET shares = ? WHERE username = ? AND stock = ?', updated_shares, username, symbol)
-            db.execute('UPDATE portfolio SET price = ? WHERE username = ? AND stock = ?', new_price, username, symbol)
-            return redirect("/")
-        updated_cash = cash - price
-        db.execute('UPDATE users SET cash = ? WHERE id = ?', updated_cash, id)
-        db.execute('INSERT INTO purchases (stock, username, price, shares) VALUES (?, ?, ?, ?)',
-                   stocks['name'], username, price, shares)
-        db.execute('INSERT INTO portfolio (stock, username, price, shares) VALUES (?, ?, ?, ?)',
-                   stocks['name'], username, price, shares)
-        return redirect("/")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirmed_password = request.form.get("confirmed_password")
+        if (
+            not email
+            or not password
+            or not confirmed_password
+        ):
+            return render_template(
+                "sign_up.html", error_text="ONE OR MORE ENTRIES MISSING"
+            )
+        if "@" not in email or "." not in email:
+            return render_template("sign_up.html", error_text="INVALID EMAIL")
+        if len(db.execute("SELECT * FROM users WHERE email = ?", email)) > 0:
+            return render_template("sign_up.html", error_text="EMAIL ALREADY IN USE")
+        if password != confirmed_password:
+            return render_template("sign_up.html", error_text="PASSWORDS DO NOT MATCH")
+        password_hash = generate_password_hash(password)
+        id = int(db.execute("SELECT MAX(id) FROM users")[0]["MAX(id)"]) + 1
+        db.execute(
+            "INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)",
+            id,
+            email,
+            password_hash
+        )
+        return redirect("/explore")
     elif request.method == "GET":
-        return render_template("buy.html")
-    return apology("TODO")
-
-
-@app.route("/history")
-@login_required
-def history():
-    """Show history of transactions"""
-    if request.method == "GET":
-        id = session["user_id"]
-        username = alphabetize(str(db.execute('SELECT username FROM users WHERE id = ?', id))).split("username")[1]
-        purchased_rows = db.execute('SELECT * FROM purchases WHERE username = ?', username)
-        sold_rows = db.execute('SELECT * FROM sales WHERE username = ?', username)
-        if len(purchased_rows) == 0:
-            return render_template("blankHistory.html")
-        purchased_id = int(digitize(str(db.execute('SELECT id FROM purchases WHERE username = ? LIMIT 1', username))))
-        purchased_stocks = []
-        purchased_prices = []
-        purchased_shares = []
-        purchased_times = []
-        for i in range(len(purchased_rows)):
-            purchased_stocks.append(symbolize(str(db.execute('SELECT stock FROM purchases WHERE id = ?', (purchased_id + i)))))
-            if lookup(purchased_stocks[i]) == None:
-                purchased_stocks.remove(purchased_stocks[i])
-            purchased_prices.append(int(digitize(str(db.execute('SELECT price FROM purchases WHERE id = ?', (purchased_id + i))))))
-            purchased_shares.append(int(digitize(str(db.execute('SELECT shares FROM purchases WHERE id = ?', (purchased_id + i))))))
-            purchased_times.append(convert_datetime(str(db.execute('SELECT time FROM purchases WHERE id = ?', (purchased_id + i)))))
-            sold_stocks = []
-            sold_prices = []
-            sold_shares = []
-            sold_times = []
-        if len(sold_rows) > 0:
-            sold_id = int(digitize(str(db.execute('SELECT id FROM sales WHERE username = ? LIMIT 1', username))))
-            for i in range(len(sold_rows)):
-                sold_stocks.append(symbolize(str(db.execute('SELECT stock FROM sales WHERE id = ?', (sold_id + i)))))
-                if lookup(sold_stocks[i]) == None:
-                    sold_stocks.remove(sold_stocks[i])
-                sold_prices.append(int(digitize(str(db.execute('SELECT price FROM sales WHERE id = ?', (sold_id + i))))))
-                sold_shares.append(int(digitize(str(db.execute('SELECT shares FROM sales WHERE id = ?', (sold_id + i))))))
-                sold_times.append(convert_datetime(str(db.execute('SELECT time FROM sales WHERE id = ?', (sold_id + i)))))
-        return render_template("history.html", usd=usd, purchased_action="Bought", sold_action="Sold",
-                               purchased_stocks=purchased_stocks, purchased_prices=purchased_prices, purchased_shares=purchased_shares,
-                               purchased_times=purchased_times, sold_stocks=sold_stocks, sold_prices=sold_prices, sold_shares=sold_shares,
-                               sold_times=sold_times, purchased_total=range(len(purchased_stocks)), sold_total=range(len(sold_stocks)))
-    return apology("TODO")
+        return render_template("sign_up.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
-
-    # Forget any user_id
     session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
-
-        # Ensure password was submitted
+        if not request.form.get("email"):
+            return render_template(
+                "login.html", error_text="EMAIL FIELD CANNOT BE BLANK"
+            )
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
-
-        # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
-
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
-
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        # Redirect user to home page
-        return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
+            return render_template(
+                "login.html", error_text="PASSWORD FIELD CANNOT BE BLANK"
+            )
+        rows = db.execute(
+            "SELECT * FROM users WHERE email = ?", request.form.get("email")
+        )
+        if len(rows) != 1 or not check_password_hash(
+            rows[0]["password_hash"], request.form.get("password")
+        ):
+            return render_template(
+                "login.html", error_text="INVALID USERNAME AND/OR PASSWORD"
+            )
+        session["user_id"] = rows[0]["email"]
+        return redirect("/explore")
     else:
         return render_template("login.html")
 
 
-@app.route("/logout")
-def logout():
+@app.route("/log-out")
+@login_required
+def log_out():
     """Log user out"""
-
-    # Forget any user_id
     session.clear()
-
-    # Redirect user to login form
     return redirect("/")
 
 
-@app.route("/quote", methods=["GET", "POST"])
-@login_required
-def quote():
-    """Get stock quote."""
-    if request.method == "POST":
-        symbol = request.form.get("symbol")
-        stocks = lookup(symbol)
-        if stocks == None or symbol == "":
-            return apology("Invalid symbol")
-        return render_template("quoted.html", stocks=stocks)
-    elif request.method == "GET":
-        return render_template("quote.html")
-    return apology("TODO")
+@app.route("/modules/civil-procedure")
+@app.route("/modules/constitutional-law")
+@app.route("/modules/contracts")
+@app.route("/modules/criminal-law-and-procedure")
+@app.route("/modules/evidence")
+@app.route("/modules/real-property")
+@app.route("/modules/torts")
+def module():
+    path = request.path
+
+    module_link = path + "/overview"
+
+    module = db.execute("SELECT DISTINCT module FROM contents WHERE module_link = ?", path)[0]["module"]
+
+    units = []
+    for i in range(len(db.execute("SELECT DISTINCT unit FROM contents WHERE module = ?", module))):
+        units.append(db.execute("SELECT DISTINCT unit FROM contents WHERE module = ?", module)[i]["unit"])
+
+    unit_descriptions = []
+    for i in range(len(units)):
+        unit_descriptions.append(db.execute("SELECT DISTINCT unit_description FROM contents WHERE unit = ?", units[i])[0]["unit_description"])
+
+    unit_links = []
+    for i in range(len(units)):
+        unit_links.append(db.execute("SELECT DISTINCT unit_link FROM contents WHERE unit = ?", units[i])[0]["unit_link"])
+
+    topics = []
+    for i in range(len(units)):
+        topics.append(db.execute("SELECT DISTINCT topic FROM contents WHERE unit = ?", units[i]))
+
+    return render_template(
+        "module_page.html",
+        module=module,
+        units=units,
+        unit_descriptions=unit_descriptions,
+        unit_links=unit_links,
+        topics=topics,
+        module_link=module_link,
+        range=range,
+        len=len,
+    )
 
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """Register user"""
-    if request.method == "POST":
-        id = 1
-        username = request.form.get("username")
-        password = request.form.get("password")
-        password_hash = generate_password_hash(password)
-        confirmation = request.form.get("confirmation")
-        if password != confirmation:
-            return apology("passwords do not match")
-        elif password == "" or confirmation == "":
-            return apology("one or more password fields left blank")
-        elif username == "":
-            return apology("username field cannot be blank")
-        elif "}]" in username or "'" in username or " " in username:
-            return apology("one or more username characters not supported")
-        try:
-            db.execute("INSERT INTO users (username, hash) VALUES (?, ?)", username, password_hash)
-        except (ValueError):
-            return apology("username already in use")
-        return redirect("/")
-    elif request.method == "GET":
-        return render_template("register.html")
-    return apology("TODO")
+@app.route("/units/jurisdiction-and-venue")
+@app.route("/units/pretrial-procedures")
+@app.route("/units/motions")
+@app.route("/units/law-applied-by-federal-courts")
+@app.route("/units/jury-trials")
+@app.route("/units/verdicts-and-judgements")
+@app.route("/units/appealability-and-review")
+@app.route("/units/individual-rights")
+@app.route("/units/the-nature-of-judicial-review")
+@app.route("/units/the-separation-of-powers")
+@app.route("/units/the-relation-of-nation-and-states")
+@app.route("/units/formation-of-contracts")
+@app.route("/units/performance,-breach,-and-discharge")
+@app.route("/units/defenses-to-enforceability")
+@app.route("/units/contract-content-and-meaning")
+@app.route("/units/remedies")
+@app.route("/units/third-party-rights")
+@app.route("/units/protection-of-accused-persons")
+@app.route("/units/homicide")
+@app.route("/units/other-crimes")
+@app.route("/units/inchoate-crimes,-parties")
+@app.route("/units/general-principles-of-criminal-law")
+@app.route("/units/relevancy-and-reasons-for-excluding-relevant-evidence")
+@app.route("/units/hearsay-and-its-circumstances-of-admissibility")
+@app.route("/units/presentation-of-evidence")
+@app.route("/units/privileges-and-other-policy-exclusions")
+@app.route("/units/writings,-recordings,-and-photographs")
+@app.route("/units/ownership-of-real-property")
+@app.route("/units/rights-in-real-property")
+@app.route("/units/real-estate-contracts")
+@app.route("/units/mortgages,-security-devices")
+@app.route("/units/titles")
+@app.route("/units/negligence")
+@app.route("/units/intentional-torts")
+@app.route("/units/strict-liability-and-products-liability")
+@app.route("/units/other-torts")
+def unit():
+    path = request.path
+
+    unit_link = path + "/overview"
+
+    unit = db.execute("SELECT DISTINCT unit FROM contents WHERE unit_link = ?", path)[0]["unit"]
+
+    topics = []
+    for i in range(len(db.execute("SELECT DISTINCT topic FROM contents WHERE unit = ?", unit))):
+        topics.append(db.execute("SELECT DISTINCT topic FROM contents WHERE unit = ?", unit)[i]["topic"])
+
+    topic_descriptions = []
+    for i in range(len(topics)):
+        topic_descriptions.append(db.execute("SELECT DISTINCT topic_description FROM contents WHERE topic = ?", topics[i])[0]["topic_description"])
+
+    topic_links = []
+    for i in range(len(topics)):
+        topic_links.append(db.execute("SELECT DISTINCT topic_link FROM contents WHERE topic = ?", topics[i])[0]["topic_link"])
+
+    return render_template(
+        "unit_page.html",
+        unit_link=unit_link,
+        unit=unit,
+        topics=topics,
+        topic_descriptions=topic_descriptions,
+        topic_links=topic_links,
+        range=range,
+        len=len,
+    )
 
 
-@app.route("/sell", methods=["GET", "POST"])
-@login_required
-def sell():
-    """Sell shares of stock"""
-    if request.method == "POST":
-        symbol = request.form.get("symbol")
-        sold_shares = int(request.form.get("shares"))
-        if symbol == "Stock Symbol":
-            return apology("Must choose a stock to sell")
-        elif sold_shares < 0:
-            return apology("Cannot sell less than 1 shares")
-        id = session["user_id"]
-        username = alphabetize(str(db.execute('SELECT username FROM users WHERE id = ?', id))).split("username")[1]
-        cash = int(digitize(str(db.execute('SELECT cash FROM users WHERE id = ?', id))))
-        bought_shares = int(
-            digitize(str(db.execute('SELECT shares FROM portfolio WHERE username = ? AND stock = ?', username, symbol))))
-        price = int(digitize(str(db.execute('SELECT price FROM portfolio WHERE username = ? AND stock = ?', username, symbol))))
-        sold_price = sold_shares * (int(lookup(symbol)['price']))
-        updated_cash = cash + price
-        updated_price = price - sold_price
-        updated_shares = bought_shares - sold_shares
-        if sold_shares > bought_shares:
-            return apology("Cannot sell more shares than you own")
-        elif sold_shares == bought_shares:
-            db.execute('UPDATE users SET cash = ? WHERE id = ?', updated_cash, id)
-            db.execute('INSERT INTO sales (stock, username, price, shares) VALUES (?, ?, ?, ?)',
-                       symbol, username, sold_price, sold_shares)
-            db.execute('DELETE FROM portfolio WHERE username = ? AND stock = ?', username, symbol)
-            return redirect("/")
-        elif sold_shares < bought_shares:
-            db.execute('UPDATE users SET cash = ? WHERE id = ?', updated_cash, id)
-            db.execute('UPDATE portfolio SET price = ? WHERE username = ? and stock = ?', updated_price, username, symbol)
-            db.execute('UPDATE portfolio SET shares = ? WHERE username = ? and stock = ?', updated_shares, username, symbol)
-            db.execute('INSERT INTO sales (stock, username, price, shares) VALUES (?, ?, ?, ?)',
-                       symbol, username, sold_price, sold_shares)
-            return redirect("/")
-        return redirect("/")
-    elif request.method == "GET":
-        id = session["user_id"]
-        username = alphabetize(str(db.execute('SELECT username FROM users WHERE id = ?', id))).split("username")[1]
-        rows = db.execute('SELECT * FROM portfolio WHERE username = ?', username)
-        if len(rows) == 0:
-            return render_template("blankSell.html")
-        portfolio_id = int(digitize(str(db.execute('SELECT id FROM portfolio WHERE username = ? LIMIT 1', username))))
-        stocks = []
-        for i in range(len(rows)):
-            stocks.append(symbolize(str(db.execute('SELECT stock FROM portfolio WHERE id = ?', portfolio_id + i))))
-            if stocks[i] == "":
-                stocks.remove(stocks[i])
-        return render_template("sell.html", stocks=stocks, total=range(len(stocks)))
-    return apology("TODO")
+@app.route("/topics/federal-subject-matter-jurisdiction")
+@app.route("/topics/personal-jurisdiction")
+@app.route("/topics/service")
+@app.route("/topics/venue")
+@app.route("/topics/preliminary-injunctions-and-temporary-restraining-orders")
+@app.route("/topics/amended-and-supplemental-pleadings")
+@app.route("/topics/rule-11:-the-sanctions-rule")
+@app.route("/topics/joinder")
+@app.route("/topics/discovery,-disclosure,-and-sanctions")
+@app.route("/topics/adjudication-without-trial")
+@app.route("/topics/pretrial-conference-&-order")
+@app.route("/topics/pretrial-motions")
+@app.route("/topics/trial-and-posttrial-motions")
+@app.route("/topics/erie-doctrine")
+@app.route("/topics/federal-common-law")
+@app.route("/topics/jury-trials")
+@app.route("/topics/defaults-and-dismissals")
+@app.route("/topics/jury-verdicts")
+@app.route("/topics/judicial-findings-and-conclusions")
+@app.route("/topics/res-judicata-and-collateral-estoppel")
+@app.route("/topics/final-judgment-rule-and-the-availability-of-interlocutory-review")
+@app.route("/topics/scope-of-review-for-judge-and-jury")
+@app.route("/topics/state-action")
+@app.route("/topics/due-process")
+@app.route("/topics/equal-protection")
+@app.route("/topics/takings")
+@app.route("/topics/other-protections")
+@app.route("/topics/first-amendment-freedoms")
+@app.route("/topics/organization-and-relationship-of-state-and-federal-courts-in-a-federal-system")
+@app.route("/topics/jurisdiction")
+@app.route("/topics/judicial-review")
+@app.route("/topics/the-powers-of-congress")
+@app.route("/topics/the-powers-of-the-president")
+@app.route("/topics/federal-interbranch-relationships")
+@app.route("/topics/intergovernmental-immunities")
+@app.route("/topics/federalism-based-limits-on-state-authority")
+@app.route("/topics/authorization-of-otherwise-invalid-state-action")
+@app.route("/topics/mutual-assent")
+@app.route("/topics/indefiniteness-and-absence-of-terms")
+@app.route("/topics/consideration")
+@app.route("/topics/obligations-enforceable-without-a-bargained-for-exchange")
+@app.route("/topics/modification-of-contracts")
+@app.route("/topics/conditions")
+@app.route("/topics/excuse-of-conditions")
+@app.route("/topics/breach")
+@app.route("/topics/obligations-of-good-faith-and-fair-dealing")
+@app.route("/topics/express-and-implied-warranties-in-sale-of-goods-contracts")
+@app.route("/topics/other-performance-matters")
+@app.route("/topics/impossibility,-impracticability,-and-frustration-of-purpose")
+@app.route("/topics/discharge-of-duties")
+@app.route("/topics/incapacity-to-contract")
+@app.route("/topics/duress-and-undue-influence")
+@app.route("/topics/mistake-and-misunderstanding")
+@app.route("/topics/fraud,-misrepresentation,-and-nondisclosure")
+@app.route("/topics/illegality,-unconscionability,-and-public-policy")
+@app.route("/topics/statute-of-frauds")
+@app.route("/topics/parol-evidence")
+@app.route("/topics/interpretation")
+@app.route("/topics/omitted-and-implied-terms")
+@app.route("/topics/expectation-interest")
+@app.route("/topics/causation,-certainty,-and-foreseeability")
+@app.route("/topics/liquidated-damages-and-penalties,-and-limitation-of-remedies")
+@app.route("/topics/avoidable-consequences-and-mitigation-of-damages")
+@app.route("/topics/rescission-and-reformation")
+@app.route("/topics/specific-performance-and-injunction")
+@app.route("/topics/reliance-and-restitution-interests")
+@app.route("/topics/third-party-beneficiaries")
+@app.route("/topics/assignment-of-rights-and-delegation-of-duties")
+@app.route("/topics/arrest,-search-and-seizure")
+@app.route("/topics/confessions-and-privilege-against-self-incrimination")
+@app.route("/topics/lineups-and-other-forms-of-identification")
+@app.route("/topics/right-to-counsel")
+@app.route("/topics/fair-trial-and-guilty-pleas")
+@app.route("/topics/double-jeopardy")
+@app.route("/topics/cruel-and-unusual-punishment")
+@app.route("/topics/burdens-of-proof-and-persuasion")
+@app.route("/topics/appeal-and-error")
+@app.route("/topics/intended-killings")
+@app.route("/topics/unintended-killings")
+@app.route("/topics/theft-and-receiving-stolen-goods")
+@app.route("/topics/robbery")
+@app.route("/topics/burglary")
+@app.route("/topics/assault-and-battery")
+@app.route("/topics/rape;-statutory-rape")
+@app.route("/topics/kidnapping")
+@app.route("/topics/arson")
+@app.route("/topics/possession-offenses")
+@app.route("/topics/inchoate-offenses")
+@app.route("/topics/parties-to-crime")
+@app.route("/topics/acts-and-omissions")
+@app.route("/topics/state-of-mind")
+@app.route("/topics/responsibility")
+@app.route("/topics/causation")
+@app.route("/topics/justification-and-excuse")
+@app.route("/topics/jurisdiction")
+@app.route("/topics/probative-value")
+@app.route("/topics/authentication-and-identification")
+@app.route("/topics/character-and-related-concepts")
+@app.route("/topics/expert-testimony")
+@app.route("/topics/real,-demonstrative,-and-experimental-evidence")
+@app.route("/topics/definition-of-hearsay")
+@app.route("/topics/present-sense-impressions-and-excited-utterances")
+@app.route("/topics/statements-of-mental,-emotional,-or-physical-condition")
+@app.route("/topics/statements-for-purposes-of-medical-diagnosis-and-treatment")
+@app.route("/topics/past-recollection-recorded")
+@app.route("/topics/business-records")
+@app.route("/topics/public-records-and-reports")
+@app.route("/topics/learned-treatises")
+@app.route("/topics/former-testimony;-depositions")
+@app.route("/topics/statements-against-interest")
+@app.route("/topics/other-exceptions-to-the-hearsay-rule")
+@app.route("/topics/right-to-confront-witnesses")
+@app.route("/topics/introduction-of-evidence")
+@app.route("/topics/presumptions")
+@app.route("/topics/mode-and-order")
+@app.route("/topics/impeachment,-contradiction,-and-rehabilitation")
+@app.route("/topics/proceedings-to-which-evidence-rules-apply")
+@app.route("/topics/spousal-immunity-and-marital-communications")
+@app.route("/topics/attorney-client-and-work-product")
+@app.route("/topics/physician/psychotherapist-patient")
+@app.route("/topics/other-privileges")
+@app.route("/topics/insurance-coverage")
+@app.route("/topics/remedial-measures")
+@app.route("/topics/compromise,-payment-of-medical-expenses,-and-plea-negotiations")
+@app.route("/topics/past-sexual-conduct-of-a-victim")
+@app.route("/topics/requirement-of-original")
+@app.route("/topics/summaries")
+@app.route("/topics/completeness-rule")
+@app.route("/topics/present-estates-and-future-interests")
+@app.route("/topics/cotenancy")
+@app.route("/topics/landlord-tenant-law")
+@app.route("/topics/special-problems")
+@app.route("/topics/restrictive-covenants")
+@app.route("/topics/easements,-profits,-and-licenses")
+@app.route("/topics/fixtures")
+@app.route("/topics/zoning")
+@app.route("/topics/real-estate-brokerage")
+@app.route("/topics/creation-and-construction")
+@app.route("/topics/marketability-of-title")
+@app.route("/topics/equitable-conversion")
+@app.route("/topics/options-and-rights-of-first-refusal")
+@app.route("/topics/fitness-and-suitability")
+@app.route("/topics/merger")
+@app.route("/topics/types-of-security-devices")
+@app.route("/topics/security-relationships")
+@app.route("/topics/transfers")
+@app.route("/topics/discharge-of-the-mortgage")
+@app.route("/topics/foreclosure")
+@app.route("/topics/adverse-possession")
+@app.route("/topics/transfer-by-deed")
+@app.route("/topics/transfer-by-operation-of-law-and-by-will")
+@app.route("/topics/title-assurance-systems")
+@app.route("/topics/special-problems")
+@app.route("/topics/the-duty-question")
+@app.route("/topics/the-standard-of-care")
+@app.route("/topics/problems-relating-to-proof-of-fault")
+@app.route("/topics/problems-relating-to-causation")
+@app.route("/topics/limitations-on-liability-and-special-rules-of-liability")
+@app.route("/topics/liability-for-acts-of-others")
+@app.route("/topics/defenses")
+@app.route("/topics/harms-to-the-person")
+@app.route("/topics/harms-to-property-interests")
+@app.route("/topics/defenses-to-claims-for-physical-harms")
+@app.route("/topics/common-law-strict-liability")
+@app.route("/topics/claims-against-manufacturers-and-other-defendants")
+@app.route("/topics/claims-based-on-nuisance")
+@app.route("/topics/claims-based-on-defamation-and-invasion-of-privacy")
+@app.route("/topics/claims-based-on-misrepresentations")
+@app.route(
+    "/topics/claims-based-on-intentional-interference-with-business-relations,-and-defenses"
+)
+def topic():
+    path = request.path
 
+    topic = db.execute("SELECT topic FROM contents WHERE topic_link = ?", path)[0]["topic"]
 
-@app.route("/changepassword", methods=["GET", "POST"])
-@login_required
-def change_password():
-    """Sell shares of stock"""
-    if request.method == "POST":
-        id = session["user_id"]
-        old_password = request.form.get("oldpassword")
-        rows = db.execute("SELECT * FROM users WHERE id = ?", id)
-        if not check_password_hash(rows[0]["hash"], old_password):
-            return apology("please your old password correctly")
-        new_password = request.form.get("newpassword")
-        password_confirmation = request.form.get("confirm")
-        new_password_hash = generate_password_hash(new_password)
-        if new_password != password_confirmation:
-            return apology("passwords do not match")
-        elif new_password == "" or password_confirmation == "":
-            return apology("one or more password fields left blank")
-        db.execute('UPDATE users SET hash = ? WHERE id = ?', new_password_hash, id)
-        session.clear()
-        return redirect("/")
-    elif request.method == "GET":
-        return render_template("changepassword.html")
+    unit = db.execute("SELECT unit FROM contents WHERE topic = ?", topic)[0]["unit"]
 
+    topics = []
+    for i in range(len(db.execute("SELECT DISTINCT topic FROM contents WHERE unit = ?", unit))):
+        topics.append(db.execute("SELECT DISTINCT topic FROM contents WHERE unit = ?", unit)[i]["topic"])
 
-def digitize(str):
-    newstr = ""
-    for i in range(len(str)):
-        if str[i].isnumeric():
-            newstr += str[i]
-    return newstr
+    topic_links = []
+    for i in range(len(topics)):
+        for j in range(len(db.execute("SELECT DISTINCT topic_link FROM contents WHERE topic = ?", topics[i]))):
+            topic_links.append(db.execute("SELECT DISTINCT topic_link FROM contents WHERE topic = ?", topics[i])[j]["topic_link"])
 
+    lesson = db.execute("SELECT lesson FROM contents WHERE topic = ?", topic)[0]["lesson"]
 
-def symbolize(str):
-    newstr = ""
-    for i in range(len(str)):
-        if str[i].isalpha():
-            if str[i].isupper():
-                newstr += str[i]
-    return newstr
-
-
-def alphabetize(str):
-    newstr = ""
-    for i in range(len(str)):
-        if str[i].isalpha() or str[i].isnumeric():
-            newstr += str[i]
-    return newstr
-
-
-def convert_datetime(str):
-    newstr = ""
-    for i in range(len(str)):
-        if str[i].isnumeric() or str[i] == " " or str[i] == "-":
-            newstr += str[i]
-        elif str[i] == ":" and str[i + 1].isnumeric():
-            newstr += str[i]
-    return newstr
-
-
-def total(list):
-    newint = 0
-    for i in range(len(list)):
-        newint += int(list[i])
-    return newint
+    return render_template("topic_page.html", topic=topic, unit=unit, topics=topics, topic_links=topic_links, lesson=lesson, range=range, len=len)

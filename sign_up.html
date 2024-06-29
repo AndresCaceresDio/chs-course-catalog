@@ -19,24 +19,27 @@
 
         <title>LawMaster - {% block title %}{% endblock %}</title>
     </head>
-
     <body class="body">
         <div class="lone-form">
             <div class="contact-form">
-                <h3 class="contact-header">Login</h3>
+                <h3 class="contact-header">Sign Up</h3>
                 <h6 style="color: red; text-align: center; font-family: 'Poppins', sans-serif;">{{ error_text }}</h6>
                 <p class="contact-subheader">Something clever that our Vice Chancellor for Strategic Copy Wittiness Consulting will contrive</p>
-                <form action="/login" method="post">
+                <form action="/sign-up" method="post">
                     <div class="form-group">
-                        <input name="email" type="email" class="form-control" placeholder="Email">
+                        <input name="email" type="text" class="form-control" placeholder="Email">
                     </div>
                     <div class="form-group">
                         <input name="password" type="password" class="form-control" placeholder="Password"></textarea>
-                </div>
-                <button type="submit">Submit</button>
-            </form>
+                    </div>
+                    <div class="form-group">
+                        <input name="confirmed_password" type="password" class="form-control" placeholder="Confirm Password"></textarea>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
+
 
 </html>

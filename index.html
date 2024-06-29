@@ -1,36 +1,23 @@
-{% extends "layout.html" %}
+{% extends "backbone.html" %}
 
 {% block title %}
-    Index
+Home
 {% endblock %}
 
 {% block main %}
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Stocks Owned</th>
-        <th scope="col">Shares Owned</th>
-        <th scope="col">Stock Price</th>
-        <th scope="col">Holding Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for i in owned %}
-      <tr>
-        <td>{{ stocks[i] }}</td>
-        <td>{{ shares[i] }}</td>
-        <td>{{ usd(stock_prices[i]) }}</td>
-        <td>{{ usd(holding_values[i]) }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-</table>
 <div>
-    <h6>
-        Cash balance: {{ cash }}
-    </h6>
-    <h6>
-        Grand total: {{ grand_total }}
-    </h6>
+    <div class="hero-container">
+        <div class="hero-text-container">
+            <h1 class="header">Study Less. Learn More.</h1>
+            <h3 class="hero-text">THE CONVENIENT WAY TO PREPARE FOR THE MBE</h3>
+            <button id="exploreButton" class="explore-button">EXPLORE</button>
+        </div>
+        <img src="https://lawmasterprep.weebly.com/uploads/1/2/4/3/124361630/editor/index-top-image-3.png?1705984136" alt="A stack of books with a golden balance on top">
+    </div>
 </div>
+<script>
+    document.getElementById("exploreButton").addEventListener("click", function() {
+        window.location.href = "/explore";
+    });
+</script>
 {% endblock %}
