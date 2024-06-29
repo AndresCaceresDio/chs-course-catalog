@@ -1,6 +1,7 @@
+from scipy.optimize import curve_fit
+from scipy.stats import pearsonr
 import ast
 import numpy as np
-from statsmodels.tsa.arima.model import ARIMA
 
 lister = []
 
@@ -16,9 +17,6 @@ for i in range(len(lister)):
 log = []
 for i in range(len(lister)):
     log.append(list(lister[i].keys()))
-
-from scipy.optimize import curve_fit
-from scipy.stats import pearsonr
 
 point = []
 rsq = []
@@ -67,13 +65,3 @@ best_model_name = max((model for model in r_squared_values if r_squared_values[m
                     key=lambda model: r_squared_values[model], default=None)
 best_r_squared = r_squared_values["Exponential"] if best_model_name else None
 print(best_r_squared)
-
-d = []
-for k in range(len(new_list)):
-    try:
-        model = ARIMA(new_list[k], order=(1, 1, 1))
-        model_fit = model.fit()
-        forecast = model_fit.forecast(steps=1)
-        d.append(forecast[0])
-    except:
-        d.append("N/A")
