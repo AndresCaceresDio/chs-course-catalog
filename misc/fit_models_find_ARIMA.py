@@ -1,5 +1,6 @@
 import ast
 import numpy as np
+from statsmodels.tsa.arima.model import ARIMA
 
 lister = []
 
@@ -15,36 +16,6 @@ for i in range(len(lister)):
 log = []
 for i in range(len(lister)):
     log.append(list(lister[i].keys()))
-
-# means = []
-# medians = []
-# modes = []
-# std_devs = []
-# rs = []
-# equations = []
-# for k in range(len(new_list)):
-#     mean = np.mean(new_list[k])
-#     means.append(mean)
-
-#     median = np.median(new_list[k])
-#     medians.append(median)
-
-#     mode = log[k][0] + new_list[k].index(max(new_list[k]))
-#     modes.append(mode)
-
-#     std_dev = np.std(new_list[k], ddof=1)
-#     std_devs.append(std_dev)
-
-#     x_values = log[k]
-#     x_mean = np.mean(x_values)
-#     y_mean = mean
-#     x_std = np.std(x_values, ddof=1)
-#     y_std = std_dev
-#     cov_xy = np.cov(x_values, new_list[k])[0][1]
-#     rs.append(cov_xy / (x_std * y_std))
-#     slope, intercept = np.polyfit(x_values, new_list[k], 1)
-#     equations.append(slope)
-
 
 from scipy.optimize import curve_fit
 from scipy.stats import pearsonr
@@ -97,19 +68,12 @@ best_model_name = max((model for model in r_squared_values if r_squared_values[m
 best_r_squared = r_squared_values["Exponential"] if best_model_name else None
 print(best_r_squared)
 
-# with open("new.txt", "w") as file:
-#     for i in range(len(rsq)):
-#         file.write(str(rsq[i]) + "\n")
-
-
-# from statsmodels.tsa.arima.model import ARIMA
-
-# d = []
-# for k in range(len(new_list)):
-#     try:
-#         model = ARIMA(new_list[k], order=(1, 1, 1))
-#         model_fit = model.fit()
-#         forecast = model_fit.forecast(steps=1)
-#         d.append(forecast[0])
-#     except:
-#         d.append("N/A")
+d = []
+for k in range(len(new_list)):
+    try:
+        model = ARIMA(new_list[k], order=(1, 1, 1))
+        model_fit = model.fit()
+        forecast = model_fit.forecast(steps=1)
+        d.append(forecast[0])
+    except:
+        d.append("N/A")
