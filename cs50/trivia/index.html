@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link href="styles.css" rel="stylesheet">
+        <title>Trivia!</title>
+        <script>
+            // TODO: Add code to check answers to questions
+            document.addEventListener('DOMContentLoaded', function () {
+                const button1 = document.getElementById('choice1');
+                const button2 = document.getElementById('choice2');
+                const button3 = document.getElementById('choice3');
+                const button4 = document.getElementById('choice4');
+                    button1.addEventListener('click', function() {
+                        document.getElementById('result1').innerHTML = 'Incorrect.';
+                        button1.style.backgroundColor = 'red';
+                        button2.style.backgroundColor = 'blue';
+                        button3.style.backgroundColor = 'blue';
+                        button4.style.backgroundColor = 'blue';
+                    });
+                    button2.addEventListener('click', function() {
+                        document.getElementById('result1').innerHTML = 'Incorrect.';
+                        button1.style.backgroundColor = 'blue';
+                        button2.style.backgroundColor = 'red';
+                        button3.style.backgroundColor = 'blue';
+                        button4.style.backgroundColor = 'blue';
+                    });
+                    button3.addEventListener('click', function() {
+                        document.getElementById('result1').innerHTML = 'Correct!';
+                        button1.style.backgroundColor = 'blue';
+                        button2.style.backgroundColor = 'blue';
+                        button3.style.backgroundColor = 'green';
+                        button4.style.backgroundColor = 'blue';
+                    });
+                    button4.addEventListener('click', function() {
+                        document.getElementById('result1').innerHTML = 'Incorrect.';
+                        button1.style.backgroundColor = 'blue';
+                        button2.style.backgroundColor = 'blue';
+                        button3.style.backgroundColor = 'blue';
+                        button4.style.backgroundColor = 'red';
+                    });
+            });
+            function checkAnswer () {
+                let answer = document.querySelector('#answer').value;
+                let input = document.getElementById('answer');
+                let result2 = document.getElementById('result2');
+                let correctAnswer = 'HyperText Transfer Protocol';
+                if (answer == correctAnswer)
+                {
+                    result2.innerHTML = 'Correct!';
+                    input.style.backgroundColor = 'green';
+                }
+                else
+                {
+                    result2.innerHTML = 'Incorrect.';
+                    input.style.backgroundColor = 'red';
+                }
+            };
+        </script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Trivia!</h1>
+        </div>
+
+        <div class="container">
+            <div class="section">
+                <h2>Part 1: Multiple Choice </h2>
+                <hr>
+                <!-- TODO: Add multiple choice question here -->
+                <h3>Who is often called the father of the computer? </h3>
+                <button class="answer1" id="choice1">Alan Turing</button>
+                <button class="answer2" id="choice2">Steve Jobs</button>
+                <button class="answer3" id="choice3">Charles Babbage</button>
+                <button class="answer4" id="choice4">Bill Gates</button>
+                <p id="result1"></p>
+            </div>
+
+            <div class="section">
+                <h2>Part 2: Free Response</h2>
+                <hr>
+                <!-- TODO: Add free response question here -->
+                <form onsubmit="checkAnswer(); return false;">
+                    <h3>What does “HTTP” stand for? </h3>
+                    <input class="answerField" autocomplete="off" autofocus id="answer"></input>
+                    <button type="submit" id="submitButton">Submit</button>
+                    <p id="result2"></p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
