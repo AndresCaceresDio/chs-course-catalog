@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Stocks Owned</th>
+        <th scope="col">Shares Owned</th>
+        <th scope="col">Stock Price</th>
+        <th scope="col">Holding Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in owned %}
+      <tr>
+        <td>{{ stocks[i] }}</td>
+        <td>{{ shares[i] }}</td>
+        <td>{{ usd(stock_prices[i]) }}</td>
+        <td>{{ usd(holding_values[i]) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+<div>
+    <h6>
+        Cash balance: {{ cash }}
+    </h6>
+    <h6>
+        Grand total: {{ grand_total }}
+    </h6>
+</div>
+{% endblock %}
