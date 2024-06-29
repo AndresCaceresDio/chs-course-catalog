@@ -6,7 +6,7 @@ CHS Courses is a website that provides a searchable database of a certain high s
 - Level of the course (AP, G/T, Honors, Regular)
 - Subject (Math, English, CTE, etc.)
 - Grade levels eligible to take the course
-- Unique code of the course
+- Unique course code
 
 All of this information is displayed in the table, making it easy to find and explore courses.
 
