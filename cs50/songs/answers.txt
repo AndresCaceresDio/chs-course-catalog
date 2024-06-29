@@ -1,0 +1,7 @@
+If they have a low energy average, that may mean they are sad and if they have a high energy average that might mean
+they are happy. If they have a high danceability average it might mean they are more extroverted/confident whereas if
+they have a low one it might mean they are more introverted/quiet. If they have a high valence average that might
+mean they are more positive/optmistic whereas if it is low they might be pessimistic.
+
+This might not represent the listener very well because it does not take into account other factors such as
+speechiness or tempo. I would simply include speechiness, tempo, and loudness as factors into calculating audio aura.
