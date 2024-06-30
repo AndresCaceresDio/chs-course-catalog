@@ -17,12 +17,12 @@ def add_date_suffix(match):
 date_pattern = re.compile(r'(?<!\d)(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2})(?!\d)')
 
 # Read the contents of the file
-with open('questions.txt', 'r') as file:
+with open('your_file.txt', 'r') as file:
     content = file.read()
 
 # Use regex sub function to replace dates with their suffixed counterparts
 modified_content = date_pattern.sub(add_date_suffix, content)
 
 # Write the new content to 'output.txt'
-with open('questions.txt', 'w') as file:
+with open('your_file.txt', 'w') as file:
     file.write(modified_content)
