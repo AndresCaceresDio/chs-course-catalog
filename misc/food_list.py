@@ -1,3 +1,6 @@
+# Program that prompts a user for a list of foods
+# When the user enters "Done", it prints out the food list
+
 def food_list():
     list = []
     while True:
