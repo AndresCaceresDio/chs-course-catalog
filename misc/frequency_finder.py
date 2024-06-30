@@ -1,3 +1,8 @@
+# Program that extracts data from a QuizBowl dataset and creates a frequency csv
+# The csv contains information on every question category
+# It displays the category name, the year of its first and last appearance
+# Also displays its frequency and pattern over time
+
 import json
 import numpy as np
 import pandas as pd
