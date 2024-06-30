@@ -1,0 +1,26 @@
+{% extends "outline.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Task</th>
+        <th scope="col">Due Date</th>
+        <th scope="col">Date of Completion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in total %}
+      <tr>
+        <td>{{ tasks[i] }}</td>
+        <td>{{ due_dates[i] }}</td>
+        <td>{{ completed_dates[i] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
