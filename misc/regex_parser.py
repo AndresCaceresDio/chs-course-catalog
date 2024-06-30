@@ -1,15 +1,13 @@
 import re
 
-pattern = r'^Question \([^)]+\): [A-Z].*[\.\?!"]\n\n[A-Z][^.!]*\n\n\(A\) .+[\.\?!"]\n\(B\) .+[\.\?!"]\n\(C\) .+[\.\?!"]\n\(D\) .+[\.\?!"]\n\n\n$'
+pattern = r'your_regex_pattern'
 
-with open("clean.txt", "r", errors="ignore") as file:
+with open("your_input.txt", "r", errors="ignore") as file:
     content = file.read()
 
 content = content.replace('\r\n', '\n')
 
-questions = re.split(r'(?<=\n\n)Question \(', content)
-
-questions = [questions[0]] + ['Question (' + q for q in questions[1:]]
+questions = re.split(r', ', content)
 
 list = []
 for i in range(len(questions)):
@@ -18,6 +16,6 @@ for i in range(len(questions)):
     if not match_result:
         list.append(i)
 
-with open("cleaning.txt", "w") as file:
+with open("your_output.txt", "w") as file:
     for i in list:
         file.write(questions[i])
