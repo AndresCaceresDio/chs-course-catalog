@@ -5,8 +5,8 @@ from scipy.stats import linregress
 from collections import defaultdict, Counter
 import csv
 
-# Load data from JSON file
-with open('dataset.json', 'r') as file:
+# Load data from JSON file, you can find similar datasets here: https://sites.google.com/view/qanta/resources
+with open('my_data.json', 'r') as file:
     data = json.load(file)
 
 # Extract categories and years
