@@ -7,7 +7,7 @@ def authenticate_with_google():
         'https://spreadsheets.google.com/feeds',
         'https://www.googleapis.com/auth/drive'
     ]
-    creds = ServiceAccountCredentials.from_json_keyfile_name('premium-apex-417623-60830a70706b.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('your_credentials.json', scope)
     client = gspread.authorize(creds)
     return client
 
@@ -40,8 +40,8 @@ def write_blocks_to_sheet(sheet, blocks):
 # Main function to execute the workflow
 def main():
     client = authenticate_with_google()
-    sheet = get_worksheet(client, 'questions', 'newbies')
-    blocks = read_and_split_file('questions.txt', 'Question (Classified): ')
+    sheet = get_worksheet(client, 'your_spreadsheet', 'your_sheet')
+    blocks = read_and_split_file('your_file.txt', ', ')
     write_blocks_to_sheet(sheet, blocks)
 
 if __name__ == '__main__':
