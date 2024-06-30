@@ -1,3 +1,8 @@
+# Program that finds the function that yields the largest R-Squared value
+# It fits linear, exponential, logarithmic, and sine models
+# It extracts the data from a txt file in a roundabout way
+# You can simply define a list with your data values and skip the first couple of lines
+
 from scipy.optimize import curve_fit
 from scipy.stats import pearsonr
 import ast
