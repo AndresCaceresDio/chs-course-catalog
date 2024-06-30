@@ -1,0 +1,30 @@
+{% extends "outline.html" %}
+
+{% block title %}
+    Tasks
+{% endblock %}
+
+{% block main %}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Task</th>
+        <th scope="col">Description</th>
+        <th scope="col">Category</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Due Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in total %}
+      <tr>
+        <td>{{ tasks[i] }}</td>
+        <td>{{ descriptions[i] }}</td>
+        <td>{{ tags[i] }}</td>
+        <td>{{ priorities[i] }}</td>
+        <td>{{ due_dates[i] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
