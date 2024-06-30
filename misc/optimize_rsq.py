@@ -3,20 +3,20 @@ from scipy.stats import pearsonr
 import ast
 import numpy as np
 
-lister = []
+dicts = []
 
 # Open the text file containing the dictionaries
 with open('editor.txt', 'r') as file:
     for line in file:
-        lister.append(ast.literal_eval(line.strip()))
+        dicts.append(ast.literal_eval(line.strip()))
 
 new_list = []
-for i in range(len(lister)):
-    new_list.append(list(lister[i].values()))
+for i in range(len(dicts)):
+    new_list.append(list(dicts[i].values()))
 
 log = []
-for i in range(len(lister)):
-    log.append(list(lister[i].keys()))
+for i in range(len(dicts)):
+    log.append(list(dicts[i].keys()))
 
 point = []
 rsq = []
