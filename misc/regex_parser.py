@@ -1,3 +1,6 @@
+# Program that checks a txt file with a regex pattern
+# Any lines that don't follow the pattern are printed to the output file
+
 import re
 
 pattern = r'your_regex_pattern'
