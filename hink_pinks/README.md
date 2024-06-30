@@ -3,8 +3,7 @@
 ## Description 
 Hink Pinks is a fun and engaging website that generates a type of riddle known as a Hink pink. A Hink pink is a riddle with two rules: the answer must include two words that rhyme perfectly, and neither of those two words are present in the riddle. For example: 
 
-**Puzzle:** A late festival
-
+**Puzzle:** A late festival -->
 **Answer:** Tardy party 
 
 Currently, the riddles are hard-coded, but future plans include implementing a database to store and manage an expanding collection of riddles. 
