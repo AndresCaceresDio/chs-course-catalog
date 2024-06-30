@@ -1,0 +1,25 @@
+{% extends "outline.html" %}
+
+{% block title %}
+    Manage Categories
+{% endblock %}
+
+{% block main %}
+    <form action="/manage-categories" method="post">
+        <div class="mb-3">
+            Current categories: No Category{{ categories }}
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Action</label>
+            <select class="form-select" name="action" aria-label="Default select example">
+                <option>&nbsp&nbsp&nbsp&nbsp&nbspAdd</option>
+                <option>&nbsp&nbsp&nbsp&nbsp&nbspRemove</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Category Name</label>
+            <input class="form-control" autofocus autocomplete="off" name="name"></input>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+{% endblock %}
