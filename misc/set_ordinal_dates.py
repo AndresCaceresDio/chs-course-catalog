@@ -1,3 +1,7 @@
+# Program to modify every date in a txt file
+# Every time it sees a month followed by a day, it adds an ordinal indicator
+# For example, January 8 becomes January 8th
+
 import re
 
 # Define the function to add the suffix to the day
