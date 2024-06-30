@@ -6,7 +6,7 @@ import numpy as np
 dicts = []
 
 # Open the text file containing the dictionaries
-with open('editor.txt', 'r') as file:
+with open('my_file.txt', 'r') as file:
     for line in file:
         dicts.append(ast.literal_eval(line.strip()))
 
