@@ -6,7 +6,7 @@ def authenticate_with_google():
         'https://spreadsheets.google.com/feeds',
         'https://www.googleapis.com/auth/drive'
     ]
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('your_credentials.json', scope)
     client = gspread.authorize(creds)
     return client
 
@@ -14,20 +14,15 @@ def get_worksheet(client, spreadsheet_name, sheet_title):
     sheet = client.open(spreadsheet_name).worksheet(sheet_title)
     return sheet
 
-def read_and_split_file(filename, delimiter):
+def read_and_split_file(filename, block_size):
     with open(filename, 'r') as file:
-        phrase = """
-Please make one more output based on this input:
-
-{"input_text": "Generate a high quality MBE Civil Procedure practice question, in English, that reflects the complexity of questions found on the actual MBE. Please include the question stem, the call of the question, four answer choices (A, B, C, D), and clearly indicate the correct answer. Do not include an explanation for the answer.", "output_text": }"""
         lines = []
         chunk = ""
         i = 0
         for line in file:
             i += 1
             chunk = chunk + str(line)
-            if (i % delimiter) == 0:
-                chunk = chunk + phrase
+            if (i % block_size) == 0:
                 lines.append(chunk)
                 chunk = ""
         if chunk:
@@ -44,8 +39,8 @@ def write_blocks_to_sheet(sheet, blocks):
 
 def main():
     client = authenticate_with_google()
-    sheet = get_worksheet(client, 'GPT-4o', 'Sheet2')
-    blocks = read_and_split_file('torts.txt', 230)
+    sheet = get_worksheet(client, 'your_spreadsheet', 'your_sheet')
+    blocks = read_and_split_file('your_file.txt', 10)
     write_blocks_to_sheet(sheet, blocks)
 
 if __name__ == '__main__':
