@@ -1,3 +1,5 @@
+# Program that scrambles the lines of a jsonl file to a random order
+
 import json
 import ast
 import random
