@@ -1,3 +1,7 @@
+# Program that converts a jsonl file to a google spreadsheet
+# The user must indicate how many jsonl lines to fit into every cell (block_size)
+# Service account credentials are required; Google Cloud must also have access to the spreadsheet
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
