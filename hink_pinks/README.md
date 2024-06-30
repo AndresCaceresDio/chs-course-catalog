@@ -49,7 +49,7 @@ To use the Hink Pinks website:
 
 This project requires the following modules, as listed in `requirements.txt`: 
 - Flask
-- datetime (normally a built-in library for Python)
+- Datetime (normally a built-in library for Python)
 
 ## Contact Information 
 
