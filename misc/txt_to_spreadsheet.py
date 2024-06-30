@@ -1,3 +1,8 @@
+# Program that converts a txt file to a google spreadsheet
+# The user must indicate a delimiter to use to split the txt file into parts
+# Each part becomes a cell in the spreadsheet; the default delimiter is a comma followed by a space
+# Service account credentials are required; Google Cloud must also have access to the spreadsheet
+
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
