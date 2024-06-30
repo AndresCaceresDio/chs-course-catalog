@@ -1,0 +1,57 @@
+.navbar-brand
+{
+    font-size: 45px;
+}
+.container-fluid
+{
+    height: 100px;
+}
+.body
+{
+    background-color: black;
+}
+.nav-link
+{
+    font-size: 20px;
+}
+.errorHeader
+{
+    color: white;
+}
+.mb-3
+{
+    color: white;
+    margin: auto;
+    width: 500px;
+}
+.form-control
+{
+    text-align: center;
+}
+.form-check-label
+{
+    color: white;
+}
+.form-label
+{
+    display: block;
+    color: white;
+}
+.btn.btn-primary
+{
+    margin: auto;
+    display: block;
+}
+.form-check.form-check-inline
+{
+    margin-bottom: 30px;
+    margin-top: 10px;
+}
+.form-select
+{
+    text-align: center;
+}
+.table
+{
+    color: white;
+}
