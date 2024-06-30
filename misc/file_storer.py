@@ -1,3 +1,10 @@
+# Program that creates two classes
+# The Archive class allows the user to create, write to, and read files
+# It includes only one attribute, namely, a list of files
+# The Computer class has three attributes; the first is a list of file lists from Archive objects
+# The next two are two NumPy arrays of those files, one horizontally stacked and alphabetically sorted
+# The other is vertically stacked
+
 import os
 import numpy as np
 
