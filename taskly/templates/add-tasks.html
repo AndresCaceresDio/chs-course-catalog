@@ -1,0 +1,50 @@
+{% extends "outline.html" %}
+
+{% block title %}
+    Add Tasks
+{% endblock %}
+
+{% block main %}
+
+<form action="/add-tasks" method="post">
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Task Title *</label>
+        <input type="text" name="title" autofocus autocomplete="off" class="form-control" id="exampleFormControlInput1">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Due Date *</label>
+        <input type="date" name="date" autocomplete="off" class="form-control" id="dateInput">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Time *</label>
+        <input type="time" name="time" autocomplete="off" class="form-control" id="exampleFormControlInput1">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">Task Description</label>
+        <textarea class="form-control" name="description" id="exampleFormControlTextarea1" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">Task Category *</label>
+        <select class="form-select" name="category" aria-label="Default select example">
+            <option>&nbsp&nbsp&nbsp&nbsp&nbspNo Category</option>
+            {% for i in total %}
+                <option>&nbsp&nbsp&nbsp&nbsp&nbsp{{ categories[i] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <label for="exampleFormControlTextarea1" class="form-label">Task Priority *</label>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="High">
+        <label class="form-check-label" for="inlineRadio1">High</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input checked class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Medium">
+        <label class="form-check-label" for="inlineRadio2">Medium</label>
+        </div>
+        <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="Low">
+        <label class="form-check-label" for="inlineRadio3">Low</label>
+        </div>
+    <button class="btn btn-primary" type="submit">Add Task</button>
+</form>
+{% endblock %}
