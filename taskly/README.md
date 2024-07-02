@@ -72,9 +72,13 @@ Taskly provides a robust task management system with various features. Here’s 
 ## Dependencies
 
 This project requires the following modules, as listed in `requirements.txt`:
-- Flask
-- SQLite (normally a built-in library for Python)
-- Other dependencies as required
+- os (normally a built-in module for Python)
+- cs50 (I used cs50's database management function, it could be easily converted to sqlite)
+- flask
+- flask_session
+- tempfile
+- werkzeug.security
+- functools
 
 ## Contact Information
 
