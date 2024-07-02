@@ -48,9 +48,9 @@ To set up and run the analysis tools for the QuizBowl project, follow these step
 
 To generate the QuizBowl question category analysis spreadsheet:
 
-1. **Find ARIMA:**
+1. **Perform Statistical Analysis:**
     ```bash
-    python find_ARIMA.py
+    python statistical_analysis.py
     ```
 
 2. **Find Frequency Data:**
@@ -63,9 +63,9 @@ To generate the QuizBowl question category analysis spreadsheet:
     python optimize_rsq.py
     ```
 
-4. **Perform Statistical Analysis:**
+4. **Find ARIMA:**
     ```bash
-    python statistical_analysis.py
+    python find_ARIMA.py
     ```
 
 This series of scripts will generate a comprehensive analysis of the question categories, similar to the provided example spreadsheet.
