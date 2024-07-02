@@ -67,7 +67,7 @@ This project requires the following modules, as listed in `requirements.txt`:
 - Flask
 - Pyspellchecker
 - Itertools
-- Other dependencies as required
+- math (normally a built-in module for Python)
 
 ## Contact Information
 
