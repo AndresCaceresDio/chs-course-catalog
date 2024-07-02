@@ -1,32 +1,16 @@
 # Program that finds the function that yields the largest R-Squared value
 # It fits linear, exponential, logarithmic, and sine models
-# It extracts the data from a txt file in a roundabout way
-# You can simply define two NumPy arrays with your x- and y-values and skip the first couple of lines
+# Data includes a NumPy array of x-values and a NumPy array of y-values
 
 from scipy.optimize import curve_fit
 from scipy.stats import pearsonr
 import ast
 import numpy as np
 
-dicts = []
-
-# Open the text file containing the dictionaries
-with open('my_file.txt', 'r') as file:
-    for line in file:
-        dicts.append(ast.literal_eval(line.strip()))
-
-new_list = []
-for i in range(len(dicts)):
-    new_list.append(list(dicts[i].values()))
-
-log = []
-for i in range(len(dicts)):
-    log.append(list(dicts[i].keys()))
-
 point = []
 rsq = []
-x_values = np.array(log[1])
-y_values = np.array(new_list[1])
+x_values = np.array(your_x_values)
+y_values = np.array(your_y_values)
 
 # Define different types of functions to fit to the data
 def linear_func(x, a, b):
